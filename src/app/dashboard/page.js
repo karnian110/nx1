@@ -1,10 +1,12 @@
 "use server";
-import Navbar from "@/components/Navbar";
+import AccountList from "@/components/AccountList";
+
 import "server-only";
 export default async function page({ params, searchParams }) {
   return (
     <>
-      <div>This is main page</div>
+      <div> this is from Dashboard </div>
+      <AccountList />
     </>
   );
 }
