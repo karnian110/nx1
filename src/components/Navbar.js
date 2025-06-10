@@ -9,7 +9,7 @@ export default async function Navbar({ params, searchParams }) {
         <ul className="flex justify-around" >
           {navItems.map((e, i) => {
             return (
-              <li key={e}> {<Link href={e.toLocaleLowerCase()}>{e}</Link>} </li>
+              <li key={e}> {<Link href={`${process.env.SITE_URL}/${e.toLocaleLowerCase()}`}>{e}</Link>} </li>
             );
           })}
         </ul>

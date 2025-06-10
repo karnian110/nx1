@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { addAccountSchema } from "@/lib/schemas";
 //Imports
-export default function AddAccountForm({ accountTypeEnum }) {
+export default function AddAccountForm({ accountTypeEnum, goto}) {
   const router = useRouter()
   const {
     register,
@@ -42,7 +42,7 @@ export default function AddAccountForm({ accountTypeEnum }) {
         },
         body: JSON.stringify(data),
       });
-      router.push('/dashboard')
+      router.push(goto)
     } catch (err) {
       console.error("Submission failed", err);
       setError("root", { message: "Unexpected error occurred" });
