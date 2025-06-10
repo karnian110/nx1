@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import AddAccountForm from "@/components/formComponents/AddAccountForm";
 import db from "@/lib/db";
-
+import EditAccountForm from "@/components/formComponents/EditAccountForm";
 // UI component
 export default async function Account({ params, searchParams }) {
   await db()
@@ -30,7 +30,33 @@ export default async function Account({ params, searchParams }) {
         {accountList.map((e) => (
           <li key={e.reference} >
             <div>
-              <h2>{e.accountName}</h2>
+              <div>
+                <h2>{e.accountName}</h2>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">Edit Account</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Edit your account</DialogTitle>
+                      <DialogDescription>
+                        {/* Reference number of this account */}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <EditAccountForm
+                      accountTypeEnum={accountTypeEnum}
+                      previousData={
+                        {
+                          accountName: e.accountName,
+                          balance: e.balance,
+                          accountType: e.accountType,
+                          reference: e.reference
+                        }
+                      }
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
               <p>BAL {e.balance}</p>
               <p>{e.accountType}</p>
             </div>
