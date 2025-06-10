@@ -1,10 +1,10 @@
 "use client";
 import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation'
 import {
   Select,
   SelectContent,
@@ -14,18 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { addAccountSchema } from "@/lib/schemas";
+//Imports
 export default function AddAccountForm({ accountTypeEnum }) {
-  // Schema
-  const addAccountSchema = z.object({
-    accountName: z
-      .string()
-      .min(2, "Account name must be at least 2 characters")
-      .transform((str) => str.trim()),
-    balance: z.coerce.number({ invalid_type_error: "Balance must be a number" }),
-    accountType: z.enum(accountTypeEnum),
-  });
-
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -36,12 +28,21 @@ export default function AddAccountForm({ accountTypeEnum }) {
     resolver: zodResolver(addAccountSchema),
     defaultValues: {
       balance: 0,
+      accountType: accountTypeEnum[0]
     },
   });
 
+  const uri = "/api/account";
   const formSubmit = async (data) => {
     try {
-      console.log("Submitting", data);
+      const res = await fetch(uri, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      router.push('/dashboard')
     } catch (err) {
       console.error("Submission failed", err);
       setError("root", { message: "Unexpected error occurred" });
@@ -58,7 +59,9 @@ export default function AddAccountForm({ accountTypeEnum }) {
           type="text"
           placeholder="Account name"
         />
-        {errors.accountName && <p className="text-red-500">{errors.accountName.message}</p>}
+        {errors.accountName && (
+          <p className="text-red-500">{errors.accountName.message}</p>
+        )}
       </div>
 
       <div>
@@ -78,7 +81,8 @@ export default function AddAccountForm({ accountTypeEnum }) {
           name="accountType"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || ""}>
+              {/* Fallback to empty string just in case */}
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select account type" />
               </SelectTrigger>
@@ -95,7 +99,9 @@ export default function AddAccountForm({ accountTypeEnum }) {
             </Select>
           )}
         />
-        {errors.accountType && <p className="text-red-500">{errors.accountType.message}</p>}
+        {errors.accountType && (
+          <p className="text-red-500">{errors.accountType.message}</p>
+        )}
       </div>
 
       {errors.root && <p className="text-red-500">{errors.root.message}</p>}

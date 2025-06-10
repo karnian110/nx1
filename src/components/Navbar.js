@@ -1,14 +1,7 @@
 "use server";
 import "server-only";
 import Link from "next/link";
-const navItems = [
-  "Dashboard",
-  "Accounts",
-  "Records",
-  "Analytics",
-  "Investments",
-  "Imports",
-];
+import { navItems } from "@/siteStates";
 export default async function Navbar({ params, searchParams }) {
   return (
     <>

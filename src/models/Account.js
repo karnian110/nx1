@@ -1,13 +1,7 @@
 'server only'
 import 'server-only'
 import mongoose from "mongoose";
-const accountTypeEnum = [
-  "General",
-  "Savings",
-  "Loan",
-  "Investment",
-  "Recovery",
-];
+import { accountTypeEnum } from '@/siteStates'
 
 const AccountSchema = new mongoose.Schema(
   {
@@ -31,4 +25,4 @@ const AccountSchema = new mongoose.Schema(
 const Account =
   mongoose.models.Account || mongoose.model("Account", AccountSchema);
 
-export { Account, accountTypeEnum };
+export default Account;

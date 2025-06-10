@@ -1,14 +1,20 @@
+'use server'
 import mongoose from "mongoose";
-const isConnected = mongoose.connection.readyState === 1 ? true : false;
+import 'server-only'
 
-if (isConnected) {
-  return true;
-} else {
-  try {
-    mongoose.connect(process.env.MONGO_URI);
+const db = async () => {
+  const isConnected = mongoose.connection.readyState === 1 ? true : false;
+  if (isConnected) {
     return true;
-  } catch (err) {
-    console.error("Something went wrong connecting Database", err);
-    throw new Error("Database not connected");
+  } else {
+    try {
+      mongoose.connect(process.env.MONGO_URI);
+      return true;
+    } catch (err) {
+      console.error("Something went wrong connecting Database", err);
+      throw new Error("Database not connected");
+    }
   }
 }
+
+export default db
