@@ -1,8 +1,7 @@
 "use server";
 import "server-only";
-import { accountTypeEnum } from '@/siteStates'
+import { accountTypeEnum } from '@/lib/siteStates'
 import { Button } from "@/components/ui/button";
-import { Settings2 } from 'lucide-react';
 import {
     Dialog,
     DialogContent,

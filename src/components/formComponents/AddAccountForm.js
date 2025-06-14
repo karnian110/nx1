@@ -15,8 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { addAccountSchema } from "@/lib/schemas";
+import axiosInstance from "@/lib/axiosInstance";
 //Imports
-export default function AddAccountForm({ accountTypeEnum, goto}) {
+export default function AddAccountForm({ accountTypeEnum, goto }) {
   const router = useRouter()
   const {
     register,
@@ -32,20 +33,13 @@ export default function AddAccountForm({ accountTypeEnum, goto}) {
     },
   });
 
-  const uri = "/api/account";
+  const uri = "/api/accounts/add"
   const formSubmit = async (data) => {
     try {
-      const res = await fetch(uri, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      await axiosInstance.post(uri, data)
       router.push(goto)
     } catch (err) {
-      console.error("Submission failed", err);
-      setError("root", { message: "Unexpected error occurred" });
+      console.error('Something went wrong', err)
     }
   };
 

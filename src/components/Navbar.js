@@ -1,7 +1,7 @@
 "use server";
 import "server-only";
 import Link from "next/link";
-import { navItems } from "@/siteStates";
+import { navItems } from "@/lib/siteStates";
 export default async function Navbar({ params, searchParams }) {
   return (
     <>
@@ -9,7 +9,7 @@ export default async function Navbar({ params, searchParams }) {
         <ul className="flex justify-around" >
           {navItems.map((e, i) => {
             return (
-              <li key={e}> {<Link href={`${process.env.SITE_URL}/${e.toLocaleLowerCase()}`}>{e}</Link>} </li>
+              <li key={e}> {<Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/u/${e.toLocaleLowerCase()}`}>{e}</Link>} </li>
             );
           })}
         </ul>

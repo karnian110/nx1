@@ -1,28 +1,14 @@
-'server only'
-import 'server-only'
-import mongoose from "mongoose";
-import { accountTypeEnum } from '@/siteStates'
+import mongoose from 'mongoose';
+import { accountTypeEnum } from '@/lib/siteStates';
+const AccountSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  accountName: { type: String, required: true },
+  accountType: { type: String, enum: accountTypeEnum, default: "General" },
+  balance: { type: Number, default: 0 }
+}, { timestamps: true });
 
-const AccountSchema = new mongoose.Schema(
-  {
-    accounts: [
-      {
-        accountName: { type: String, required: true, trim: true },
-        balance: { type: Number, required: true }, // negative values allowed
-        accountType: {
-          type: String,
-          required: true,
-          enum: accountTypeEnum,
-          trim: true,
-        },
-        reference: { type: String, required: true, trim: true },
-      },
-    ],
-  },
-  { timestamps: true }
-);
+// Index for performance
+AccountSchema.index({ userId: 1 });
 
-const Account =
-  mongoose.models.Account || mongoose.model("Account", AccountSchema);
-
+const Account = mongoose.models.Account || mongoose.model('Account', AccountSchema);
 export default Account;
