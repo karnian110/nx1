@@ -112,3 +112,29 @@ export const signinSchema = z
                 message: "Password must contain at least one special character (@, $, !, %, *, ?, &)",
             }),
     });
+
+
+
+export const transactionSchema = z.object({
+    accountId: z.string().min(1, { message: 'Select account' }).regex(/^[a-f\d]{24}$/i, 'Invalid accountId'),
+    type: z.enum(['income', 'expense', 'transfer']),
+    amount: z.coerce.number({
+        invalid_type_error: 'Amount must be a number',
+        required_error: 'Amount is required'
+    }).positive('Amount must be positive'),
+    category: z.string().max(500, { message: 'Text too long' }).optional(),
+    description: z.string().max(500, { message: 'Text too long' }).optional(),
+    relatedAccount: z
+        .string()
+        .min(1, { message: 'Select account' })
+        .regex(/^[a-f\d]{24}$/i, 'Invalid relatedAccount')
+        .optional()
+}).refine((data) => {
+    if (data.type === 'transfer') {
+        return data.relatedAccount && data.relatedAccount !== data.accountId;
+    }
+    return true;
+}, {
+    message: 'Cant transfer between same account',
+    path: ['relatedAccount']
+});

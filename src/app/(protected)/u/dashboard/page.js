@@ -1,33 +1,14 @@
 "use server";
 import "server-only";
-import { accountTypeEnum } from '@/lib/siteStates'
-import { Settings2 } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,  // <- imported
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import db from "@/lib/db";
-import { auth } from "@/auth";
-import Account from "@/models/Account";
-import EditAccountForm from "@/components/formComponents/EditAccountForm";
 import AddAccount from "@/components/reusableComponent/AddAccount";
 import SignOutButton from "@/components/SignoutBtn";
 import EditAccount from "@/components/reusableComponent/EditAccount";
+import myAllAccount from "@/controller/myAllAccount.controller";
 //Imports
 
 export default async function page({ params, searchParams }) {
   try {
-    const session = await auth()
-    if (!session) {
-      //Redirect to signin
-    }
-    const { _id } = session.user
-    await db()
-    const accountList = await Account.find({ userId: _id }) //VVI for security
+    const accountList = await myAllAccount()
     return (
       <>
         <ul className="flex justify-around"  >

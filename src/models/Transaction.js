@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const TransactionSchema = new mongoose.Schema({
   accountId: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true },
-  type: { type: String, enum: ['credit', 'debit', 'transfer'], required: true },
+  type: { type: String, enum: ['income', 'expense', 'transfer'], required: true },
   amount: { type: Number, required: true },
   category: { type: String }, // Optional: 'salary', 'bills', etc.
   description: { type: String },
