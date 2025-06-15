@@ -4,19 +4,47 @@ import { accountTypeEnum } from "@/lib/siteStates";
 export const addAccountSchema = z.object({
     accountName: z.string().min(1, { message: 'Account name is required' }),
     accountType: z.enum(accountTypeEnum).optional().default('General'),
-     balance: z
-    .union([z.string(), z.number()])
-    .optional()
-    .refine(
-      (val) =>
-        val === undefined || // allow default
-        (!isNaN(Number(val)) && val !== ''), // must be a number
-      {
-        message: 'Balance must be a valid number',
-      }
-    )
-    .transform((val) => (val === undefined ? 0 : Number(val))),
+    balance: z
+        .union([z.string(), z.number()])
+        .optional()
+        .refine(
+            (val) =>
+                val === undefined || // allow default
+                (!isNaN(Number(val)) && val !== ''), // must be a number
+            {
+                message: 'Balance must be a valid number',
+            }
+        )
+        .transform((val) => (val === undefined ? 0 : Number(val))),
 });
+
+
+export const editAccountSchema = z
+    .object({
+        _id: z.string().min(1, { message: 'Invalid Id' }),
+
+        accountName: z
+            .string()
+            .min(1, { message: 'Account name is required' })
+            .optional(),
+
+        accountType: z
+            .enum(accountTypeEnum)
+            .optional(),
+
+        balance: z
+            .union([z.string(), z.number()])
+            .optional()
+            .refine(
+                (val) =>
+                    val === undefined || (!isNaN(Number(val)) && val !== ''),
+                {
+                    message: 'Balance must be a valid number',
+                }
+            )
+            .transform((val) => (val === undefined ? 0 : Number(val))),
+    })
+    .strict();
 
 
 export const signupSchema = z

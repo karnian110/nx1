@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation'
+
 import {
     Select,
     SelectContent,
@@ -15,6 +16,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { addAccountSchema } from "@/lib/schemas";
+import axiosInstance from "@/lib/axiosInstance";
 //Imports
 export default function EditAccountForm({ accountTypeEnum, previousData }) {
     const router = useRouter()
@@ -32,21 +34,21 @@ export default function EditAccountForm({ accountTypeEnum, previousData }) {
             accountName: previousData.accountName
         },
     });
-
-    const uri = "/api/account";
     const formSubmit = async (data) => {
+        const changedData = {}
+        if (data.accountType !== previousData.accountType) { changedData["accountType"] = data.accountType }
+        if (data.accountName !== previousData.accountName) { changedData["accountName"] = data.accountName }
+        if (data.balance !== previousData.balance) { changedData["balance"] = data.balance }
+        //When Data is not changed
+        if (Object.keys(changedData).length === 0) { return }
         try {
-            const res = await fetch(uri, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ ...data, reference: previousData.reference }),
-            });
-            router.push('/dashboard')
+            const endPoint = '/api/accounts/edit'
+            const response = await axiosInstance.post(endPoint, { ...changedData, _id: previousData._id })
+            if (response.data.success) {
+                router.refresh()
+            }
         } catch (err) {
-            console.error("Submission failed", err);
-            setError("root", { message: "Unexpected error occurred" });
+            console.error('Something went wrong', err)
         }
     };
 

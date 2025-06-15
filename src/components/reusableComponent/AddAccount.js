@@ -11,7 +11,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import AddAccountForm from "@/components/formComponents/AddAccountForm";
-export default async function AddAccount({ goto }) {
+export default async function AddAccount() {
     return (
         <>
             <Dialog>
@@ -25,7 +25,7 @@ export default async function AddAccount({ goto }) {
                             Fill out the form below to add a new account.
                         </DialogDescription>
                     </DialogHeader>
-                    <AddAccountForm accountTypeEnum={accountTypeEnum} goto={goto} />
+                    <AddAccountForm accountTypeEnum={accountTypeEnum} />
                 </DialogContent>
             </Dialog>
         </>

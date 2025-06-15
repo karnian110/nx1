@@ -17,7 +17,7 @@ import {
 import { addAccountSchema } from "@/lib/schemas";
 import axiosInstance from "@/lib/axiosInstance";
 //Imports
-export default function AddAccountForm({ accountTypeEnum, goto }) {
+export default function AddAccountForm({ accountTypeEnum }) {
   const router = useRouter()
   const {
     register,
@@ -37,7 +37,7 @@ export default function AddAccountForm({ accountTypeEnum, goto }) {
   const formSubmit = async (data) => {
     try {
       await axiosInstance.post(uri, data)
-      router.push(goto)
+      router.refresh()
     } catch (err) {
       console.error('Something went wrong', err)
     }

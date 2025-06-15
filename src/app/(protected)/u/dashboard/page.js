@@ -26,7 +26,7 @@ export default async function page({ params, searchParams }) {
     }
     const { _id } = session.user
     await db()
-    const accountList = await Account.find({ userId: _id })
+    const accountList = await Account.find({ userId: _id }) //VVI for security
     return (
       <>
         <ul className="flex justify-around"  >
@@ -53,7 +53,7 @@ export default async function page({ params, searchParams }) {
                             accountName: e.accountName,
                             balance: e.balance,
                             accountType: e.accountType,
-                            reference: e.reference
+                            _id: e._id.toString()
                           }
                         }
                       />
@@ -67,7 +67,7 @@ export default async function page({ params, searchParams }) {
           ))}
         </ul>
         <div>
-          <AddAccount goto={`${process.env.NEXT_PUBLIC_SITE_URL}/u/dashboard`} />
+          <AddAccount />
         </div>
         <SignOutButton />
       </>
