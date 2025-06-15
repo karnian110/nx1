@@ -15,6 +15,7 @@ import { auth } from "@/auth";
 import Account from "@/models/Account";
 import EditAccountForm from "@/components/formComponents/EditAccountForm";
 import AddAccount from "@/components/reusableComponent/AddAccount";
+import SignOutButton from "@/components/SignoutBtn";
 //Imports
 
 export default async function page({ params, searchParams }) {
@@ -29,7 +30,7 @@ export default async function page({ params, searchParams }) {
     return (
       <>
         <ul className="flex justify-around"  >
-          {accountList.map((e,i) => (
+          {accountList.map((e, i) => (
             <li key={i} >
               <div>
                 <div className="flex justify-around" >
@@ -68,6 +69,7 @@ export default async function page({ params, searchParams }) {
         <div>
           <AddAccount goto={`${process.env.NEXT_PUBLIC_SITE_URL}/u/dashboard`} />
         </div>
+        <SignOutButton />
       </>
     );
   } catch (err) {
