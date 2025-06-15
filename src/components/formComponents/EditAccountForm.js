@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation'
-
 import {
     Select,
     SelectContent,
@@ -18,7 +17,8 @@ import {
 import { addAccountSchema } from "@/lib/schemas";
 import axiosInstance from "@/lib/axiosInstance";
 //Imports
-export default function EditAccountForm({ accountTypeEnum, previousData }) {
+export default function EditAccountForm({ accountTypeEnum, account }) {
+    console.log(account)
     const router = useRouter()
     const {
         register,
@@ -29,21 +29,21 @@ export default function EditAccountForm({ accountTypeEnum, previousData }) {
     } = useForm({
         resolver: zodResolver(addAccountSchema),
         defaultValues: {
-            balance: previousData.balance,
-            accountType: previousData.accountType,
-            accountName: previousData.accountName
+            accountType: account.accountType,
+            accountName: account.accountName,
+            balance: account.balance,
         },
     });
     const formSubmit = async (data) => {
         const changedData = {}
-        if (data.accountType !== previousData.accountType) { changedData["accountType"] = data.accountType }
-        if (data.accountName !== previousData.accountName) { changedData["accountName"] = data.accountName }
-        if (data.balance !== previousData.balance) { changedData["balance"] = data.balance }
+        if (data.accountType !== account.accountType) { changedData["accountType"] = data.accountType }
+        if (data.accountName !== account.accountName) { changedData["accountName"] = data.accountName }
+        if (data.balance !== account.balance) { changedData["balance"] = data.balance }
         //When Data is not changed
         if (Object.keys(changedData).length === 0) { return }
         try {
             const endPoint = '/api/accounts/edit'
-            const response = await axiosInstance.post(endPoint, { ...changedData, _id: previousData._id })
+            const response = await axiosInstance.post(endPoint, { ...changedData, _id: account._id })
             if (response.data.success) {
                 router.refresh()
             }

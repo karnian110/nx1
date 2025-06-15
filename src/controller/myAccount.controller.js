@@ -6,7 +6,6 @@ import Account from "@/models/Account"
 const myAccount = async (accountID) => {
     try {
         const session = await auth()
-        console.log(accountID)
         await db()
         const response = await Account.findOne({ _id: accountID, userId: session.user._id }); //VVI for security
         if (!response) { return false }
