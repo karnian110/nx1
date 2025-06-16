@@ -115,26 +115,48 @@ export const signinSchema = z
 
 
 
+
+
 export const transactionSchema = z.object({
-    accountId: z.string().min(1, { message: 'Select account' }).regex(/^[a-f\d]{24}$/i, 'Invalid accountId'),
-    type: z.enum(['income', 'expense', 'transfer']),
-    amount: z.coerce.number({
-        invalid_type_error: 'Amount must be a number',
-        required_error: 'Amount is required'
-    }).positive('Amount must be positive'),
-    category: z.string().max(500, { message: 'Text too long' }).optional(),
-    description: z.string().max(500, { message: 'Text too long' }).optional(),
-    relatedAccount: z
-        .string()
-        .min(1, { message: 'Select account' })
-        .regex(/^[a-f\d]{24}$/i, 'Invalid relatedAccount')
-        .optional()
-}).refine((data) => {
-    if (data.type === 'transfer') {
-        return data.relatedAccount && data.relatedAccount !== data.accountId;
+  accountId: z
+    .string()
+    .min(1, { message: 'Select account' })
+    .regex(/^[a-f\d]{24}$/i, 'Invalid accountId'),
+
+  type: z.enum(['income', 'expense', 'transfer'], { message: 'Invalid type' }),
+
+  amount: z.coerce.number({
+    invalid_type_error: 'Amount must be a number',
+    required_error: 'Amount is required',
+  }).positive('Amount must be positive'),
+
+  category: z.string().max(500, { message: 'Text too long' }).optional(),
+
+  description: z.string().max(500, { message: 'Text too long' }).optional(),
+
+  relatedAccount: z.string().optional(), // conditionally required below
+}).superRefine((data, ctx) => {
+  const isValidObjectId = (val) => /^[a-f\d]{24}$/i.test(val);
+
+  if (data.type === 'transfer') {
+    if (!data.relatedAccount || data.relatedAccount.trim() === '') {
+      ctx.addIssue({
+        path: ['relatedAccount'],
+        code: z.ZodIssueCode.custom,
+        message: 'Select account',
+      });
+    } else if (!isValidObjectId(data.relatedAccount)) {
+      ctx.addIssue({
+        path: ['relatedAccount'],
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid relatedAccount',
+      });
+    } else if (data.relatedAccount === data.accountId) {
+      ctx.addIssue({
+        path: ['relatedAccount'],
+        code: z.ZodIssueCode.custom,
+        message: 'Cant transfer between same account',
+      });
     }
-    return true;
-}, {
-    message: 'Cant transfer between same account',
-    path: ['relatedAccount']
+  }
 });

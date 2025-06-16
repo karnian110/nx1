@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, Controller } from "react-hook-form";
 import { transactionSchema } from "@/lib/schemas";
+import { expenseCategory, incomeCategory } from '@/lib/siteStates';
+import { useRouter } from 'next/navigation'
 import {
     Select,
     SelectContent,
@@ -14,21 +16,26 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import axiosInstance from '@/lib/axiosInstance';
 export default function RecordsForm({ accounts }) {
+    const router = useRouter()
     //initialization of useForm
     const { register, control, watch, formState: { isSubmitting, errors }, handleSubmit } = useForm({
         resolver: zodResolver(transactionSchema),
         defaultValues: {
             type: 'income',
             accountId: "",
-            relatedAccount: "",
         }
     })
     const recordType = watch('type')
     //
     //Handle submit function
     const formSubmit = async (data) => {
-        console.log(data)
+        const urlEndpoint = `${process.env.NEXT_PUBLIC_SITE_URL}/api/records/add`
+        const response = await axiosInstance.post(urlEndpoint, data)
+        if (response.data.success) {
+            router.refresh()
+        }
     };
     //Handle submit function
     //
@@ -51,12 +58,12 @@ export default function RecordsForm({ accounts }) {
                 </div>
                 {/* Account */}
                 <div>
-                    <label>{
+                    <Label>{
                         errors.accountId ?
                             (<p className="text-red-500">{errors.accountId.message}</p>)
                             :
                             recordType === 'transfer' ? "From Account" : "Account"
-                    }</label>
+                    }</Label>
                     <Controller
                         name="accountId"
                         control={control}
@@ -85,12 +92,12 @@ export default function RecordsForm({ accounts }) {
                 <div>
                     {recordType === 'transfer' && (
                         <div>
-                            <label>{
+                            <Label>{
                                 errors.relatedAccount ?
                                     (<p className="text-red-500">{errors.relatedAccount.message}</p>)
                                     :
                                     'To Account'
-                            }</label>
+                            }</Label>
                             <Controller
                                 name="relatedAccount"
                                 control={control}
@@ -131,20 +138,64 @@ export default function RecordsForm({ accounts }) {
                         placeholder="Amount in BDT"
                     />
                 </div>
-                <div>
+                {recordType !== 'transfer' && (<div>
                     <Label>{
                         errors.category ?
                             (<p className="text-red-500">{errors.category.message}</p>)
                             :
                             'Category'
                     }</Label>
-                    <Input
-                        id="category"
-                        {...register("category")}
-                        type="text"
-                        placeholder="Category"
+                    <Controller
+                        name="category"
+                        control={control}
+                        render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                                {/* Fallback to empty string just in case */}
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {
+                                        //statement 1 
+                                        recordType === 'income' && (
+                                            Object.entries(incomeCategory).map(([objKey, objValueArray], index) => {
+                                                return <div key={`${objKey}${index}`}>
+                                                    <SelectGroup  >
+                                                        <SelectLabel>{objKey}</SelectLabel>
+                                                        {objValueArray.map((catName, index2) => (
+                                                            <SelectItem key={`${index2}${catName}${objKey}`} value={catName}>
+                                                                {catName}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectGroup>
+                                                </div>
+                                            })
+                                        )
+                                        //end of statement 1 
+                                    }
+                                    {
+                                        //statement 1 
+                                        recordType === 'expense' && (
+                                            Object.entries(expenseCategory).map(([objKey, objValueArray], index) => {
+                                                return <div key={`${objKey}${index}`}>
+                                                    <SelectGroup  >
+                                                        <SelectLabel>{objKey}</SelectLabel>
+                                                        {objValueArray.map((catName, index2) => (
+                                                            <SelectItem key={`${index2}${catName}${objKey}`} value={catName}>
+                                                                {catName}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectGroup>
+                                                </div>
+                                            })
+                                        )
+                                        //end of statement 1 
+                                    }
+                                </SelectContent>
+                            </Select>
+                        )}
                     />
-                </div>
+                </div>)}
                 <div>
                     <Label>{
                         errors.description ?

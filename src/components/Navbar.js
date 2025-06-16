@@ -2,6 +2,7 @@
 import "server-only";
 import Link from "next/link";
 import { navItems } from "@/lib/siteStates";
+import AddRecords from "./reusableComponent/AddRecords";
 export default async function Navbar({ params, searchParams }) {
   return (
     <>
@@ -12,6 +13,7 @@ export default async function Navbar({ params, searchParams }) {
               <li key={e}> {<Link href={`${process.env.NEXT_PUBLIC_SITE_URL}/u/${e.toLocaleLowerCase()}`}>{e}</Link>} </li>
             );
           })}
+        <AddRecords/>
         </ul>
       </nav>
     </>
